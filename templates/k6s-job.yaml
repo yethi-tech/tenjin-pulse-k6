@@ -1,0 +1,77 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-tenjin-pulse-k6
+  labels:
+    app: {{ .Release.Name }}-tenjin-pulse-k6
+
+spec:
+  schedule: {{ .Values.K6.schedule | default "5 5 5 5 5" | quote }}
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      completionMode: Indexed
+      # clamp: never exceed maxPods, no matter what pods= is set to
+      parallelism: {{ min (.Values.K6.pods | default 3) (.Values.K6.maxPods | default 20) }}
+      completions: {{ min (.Values.K6.pods | default 3) (.Values.K6.maxPods | default 20) }}
+      backoffLimit: 0
+
+      template:
+        metadata:
+          labels:
+            app: {{ .Release.Name }}-tenjin-pulse-k6
+        spec:
+          serviceAccountName: {{ .Release.Name }}-tenjin-pulse-master-sa
+          restartPolicy: Never
+          containers:
+            - name: tenjin-pulse-k6
+              image: {{ .Values.K6.image | default "myrepo/k6-custom:latest" }}
+              volumeMounts:
+                - name: k6-data-volume
+                  mountPath: /root/tenjinpt-k6-pv
+              resources:
+                requests:
+                  memory: {{ .Values.K6.resources.requests.memory | default "512Mi" }}
+                  cpu: {{ .Values.K6.resources.requests.cpu | default "500m" }}
+                limits:
+                  memory: {{ .Values.K6.resources.limits.memory | default "1Gi" }}
+                  cpu: {{ .Values.K6.resources.limits.cpu | default "1" }}
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -x
+                  IDX="${JOB_COMPLETION_INDEX:-0}"
+                  TOTAL={{ min (.Values.K6.pods | default 3) (.Values.K6.maxPods | default 20) }}
+                  NEXT=$((IDX + 1))
+                  SEQ="0/${TOTAL}"
+                  i=1
+                  while [ "$i" -le "${TOTAL}" ]; do
+                    SEQ="${SEQ},${i}/${TOTAL}"
+                    i=$((i + 1))
+                  done
+                  k6 run /root/tenjinpt-k6-pv/Tenjin.js \
+                    --execution-segment "${IDX}/${TOTAL}:${NEXT}/${TOTAL}" \
+                    --execution-segment-sequence "${SEQ}" \
+                    --tag "podindex=${IDX}" \
+                    --out json=/root/tenjinpt-k6-pv/results-${IDX}.json
+          volumes:
+            - name: k6-data-volume
+              persistentVolumeClaim:
+                claimName: {{ .Release.Name }}-tenjin-pulse-k6-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-tenjin-pulse-k6-pvc
+  labels:
+    app: {{ .Release.Name }}-tenjin-pulse-k6
+
+spec:
+  accessModes:
+    - ReadWriteMany
+
+  resources:
+    requests:
+      storage: {{ .Values.K6.persistence.size | default "6Gi" }}
+
+  storageClassName: {{ .Values.K6.persistence.storageClassName | default "efs-sc" }}

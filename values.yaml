@@ -1,0 +1,27 @@
+# values.yaml
+
+K6:
+  # used in: cronjob.yaml -> spec.schedule
+  schedule: "5 5 5 5 5"
+
+  # used in: cronjob.yaml -> min(pods, maxPods) for parallelism/completions,
+  # and again inside the shell script as TOTAL
+  pods: 3
+  maxPods: 20
+
+  # used in: cronjob.yaml -> containers[0].image
+  image: yethitech/performance-testing:kube-3-2-25
+
+  # used in: cronjob.yaml -> containers[0].resources
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+
+  # used in: pvc.yaml -> spec.resources.requests.storage / storageClassName
+  persistence:
+    size: 6Gi
+    storageClassName: efs-sc
