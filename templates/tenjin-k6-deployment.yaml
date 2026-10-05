@@ -63,8 +63,8 @@ spec:
   accessModes:
     - ReadWriteMany
 
-  storageClassName: {{ .Values.ptService.persistence.storageClassName | default "efs-sc" }}
+  storageClassName: {{ .Values.k6Service.persistence.storageClassName | default "efs-sc" }}
 
   resources:
     requests:
-      storage: {{ .Values.ptService.persistence.size | default "20Gi" }}
+      storage: {{ .Values.k6Service.persistence.size | default "20Gi" }}
