@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-tenjin-k6-service
+  labels:
+    app: {{ .Release.Name }}-tenjin-k6-service
+spec:
+  type: {{ .Values.k6Service.service.type | default "ClusterIP" }}
+  selector:
+    app: {{ .Release.Name }}-tenjin-k6-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.k6Service.service.port | default 8080 }}
+      targetPort: {{ .Values.k6Service.service.targetPort | default 8080 }}

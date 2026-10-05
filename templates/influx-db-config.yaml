@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-influxdb-config
+  labels:
+    app: {{ .Release.Name }}-influxdb
+data:
+  DOCKER_INFLUXDB_INIT_MODE: "setup"
+  DOCKER_INFLUXDB_INIT_USERNAME: {{ .Values.InfluxDB.username | quote }}
+  DOCKER_INFLUXDB_INIT_PASSWORD: {{ .Values.InfluxDB.password | quote }}
+  DOCKER_INFLUXDB_INIT_ORG: {{ .Values.InfluxDB.org | quote }}
+  DOCKER_INFLUXDB_INIT_BUCKET: {{ .Values.InfluxDB.bucket | quote }}
+  DOCKER_INFLUXDB_INIT_RETENTION: {{ .Values.InfluxDB.retention | quote }}

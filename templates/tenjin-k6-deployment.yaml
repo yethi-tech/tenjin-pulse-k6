@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-tenjin-k6-service
+  labels:
+    app: {{ .Release.Name }}-tenjin-k6-service
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-tenjin-k6-service
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-tenjin-k6-service
+
+    spec:
+      serviceAccountName: {{ .Release.Name }}-pt-service-sa
+
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until nc -zv {{ .Release.Name }}-postgres 5432; do
+                echo "Waiting for postgres to be available..."
+                sleep 5
+              done
+
+      containers:
+        - name: tenjin-k6-service
+          image: "{{ .Values.k6Service.image | default "registry.yethi.in/products/tenjin-pulse/tenjin-pt/tenjin-k6-service:test" }}"
+          ports:
+            - containerPort: 8080
+
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-tenjin-k6-service-config
+
+          volumeMounts:
+            - name: pt-storage
+              mountPath: /tenjin
+      volumes:
+        - name: pt-storage
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-tenjin-shared-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-tenjin-shared-pvc
+  labels:
+    app: {{ .Release.Name }}-tenjin-shared
+  annotations:
+    helm.sh/resource-policy: "keep"
+
+spec:
+  accessModes:
+    - ReadWriteMany
+
+  storageClassName: {{ .Values.ptService.persistence.storageClassName | default "efs-sc" }}
+
+  resources:
+    requests:
+      storage: {{ .Values.ptService.persistence.size | default "20Gi" }}

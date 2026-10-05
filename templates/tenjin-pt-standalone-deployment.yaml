@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-tenjin-pt-standalone
+  labels:
+    app: {{ .Release.Name }}-tenjin-pt-standalone
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-tenjin-pt-standalone
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-tenjin-pt-standalone
+
+    spec:
+      serviceAccountName: {{ .Release.Name }}-pt-service-sa
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until nc -zv {{ .Release.Name }}-postgres 5432; do
+                echo "Waiting for postgres to be available..."
+                sleep 5
+              done
+
+      containers:
+        - name: tenjin-pt-standalone
+          image: "{{ .Values.tenjinStandalone.image | default "yethitech/tenjin-pt-standalone:2.3.2" }}"
+
+          ports:
+            - containerPort: 8080
+
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-tenjin-pt-standalone-config
+
+          volumeMounts:
+            - name: shared-storage
+              mountPath: /tenjin
+
+            - name: ssl-certs
+              mountPath: /etc/ssl/certs
+              readOnly: true
+
+      volumes:
+        - name: shared-storage
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-tenjin-shared-pvc
+
+        - name: ssl-certs
+          secret:
+            secretName: tenjin-ssl-secret
+            defaultMode: 420

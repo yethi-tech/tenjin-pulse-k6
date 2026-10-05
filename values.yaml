@@ -1,27 +1,72 @@
-# values.yaml
+db:
+  POSTGRES_DB: tenjin
+  driver: org.postgresql.Driver
+  username: postgres
+  password: postgres
+  database: tenjin
+  type: postgres
+  accessMode: ReadWriteOnce
+  storageClassName: gp3
+  size: 20Gi
 
-K6:
-  # used in: cronjob.yaml -> spec.schedule
-  schedule: "5 5 5 5 5"
+influxdb:
+  url: <influxdb_url>
+  token: <influxdb_token>
+  org: Yethi
+  bucket: jmeter
 
-  # used in: cronjob.yaml -> min(pods, maxPods) for parallelism/completions,
-  # and again inside the shell script as TOTAL
-  pods: 3
-  maxPods: 20
+k6Service:
+  image: registry.yethi.in/products/tenjin-pulse/tenjin-pt/tenjin-k6-service:test
 
-  # used in: cronjob.yaml -> containers[0].image
-  image: yethitech/performance-testing:kube-3-2-25
-
-  # used in: cronjob.yaml -> containers[0].resources
-  resources:
-    requests:
-      memory: "512Mi"
-      cpu: "500m"
-    limits:
-      memory: "1Gi"
-      cpu: "1"
-
-  # used in: pvc.yaml -> spec.resources.requests.storage / storageClassName
   persistence:
-    size: 6Gi
+    size: 20Gi
     storageClassName: efs-sc
+
+  allowedExtensions: ""
+
+  workerCount: 3
+
+  workerImage: ""
+
+  workerImagePullSecret: ""
+
+  executionStorageClaim: ""
+
+  workerCpuRequest: ""
+
+  workerCpuLimit: ""
+
+  workerMemoryRequest: ""
+
+  workerMemoryLimit: ""
+
+  workerReadyTimeoutSeconds: 180
+
+  monitorIntervalMs: 15000
+
+  service:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+
+litmus:
+  serviceUrl: http://<litmus-ip>:<litmus-port>
+  serviceToken: <litmus-token>
+
+tenjinStandalone:
+  image: yethitech/tenjin-pt-standalone:2.3.0
+  baseUrl: <tenjin-standalone-url>
+  mailHost: smtp.office365.com
+  mailPort: 587
+  mailUsername: ""
+  mailPassword: "1C3cr$%cr3am"
+  chaosTesting: "true"
+  timezone: Asia/Kolkata
+  cookieHttp: "false"
+  cookieSecure: "false"
+  cookieSite: strict
+
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8080

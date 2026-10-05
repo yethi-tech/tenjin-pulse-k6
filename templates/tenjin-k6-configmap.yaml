@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-tenjin-k6-service-config
+  labels:
+    app: {{ .Release.Name }}-tenjin-k6-service
+
+data:
+  # =========================
+  # Database
+  # =========================
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "{{ .Values.db.driver }}"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ .Release.Name }}-postgres:5432/{{ .Values.db.database }}"
+  SPRING_DATASOURCE_USERNAME: "{{ .Values.db.username }}"
+  SPRING_DATASOURCE_PASSWORD: "{{ .Values.db.password }}"
+
+  # =========================
+  # InfluxDB
+  # =========================
+  TENJIN_INFLUX_DB_URL: "{{ .Values.influxdb.url }}"
+  TENJIN_INFLUX_DB_TOKEN: "{{ .Values.influxdb.token }}"
+  TENJIN_INFLUX_DB_ORG: "{{ .Values.influxdb.org }}"
+  TENJIN_INFLUX_DB_BUCKET: "{{ .Values.influxdb.bucket }}"
+
+  # =========================
+  # K6 Service
+  # =========================
+  TENJIN_UPLOAD_PATH: "{{ .Values.k6Service.uploadPath }}"
+  TENJIN_K6_ALLOWED_EXTENSIONS: "{{ .Values.k6Service.allowedExtensions }}"
+
+  # =========================
+  # K6 Worker Configuration
+  # =========================
+  TENJIN_K6_WORKER_COUNT: "{{ .Values.k6Service.workerCount }}"
+  TENJIN_K6_WORKER_IMAGE: "{{ .Values.k6Service.workerImage }}"
+  TENJIN_K6_WORKER_IMAGE_PULL_SECRET: "{{ .Values.k6Service.workerImagePullSecret }}"
+  TENJIN_K6_EXECUTION_STORAGE_CLAIM: "{{ .Values.k6Service.executionStorageClaim }}"
+
+  TENJIN_K6_WORKER_CPU_REQUEST: "{{ .Values.k6Service.workerCpuRequest }}"
+  TENJIN_K6_WORKER_CPU_LIMIT: "{{ .Values.k6Service.workerCpuLimit }}"
+  TENJIN_K6_WORKER_MEMORY_REQUEST: "{{ .Values.k6Service.workerMemoryRequest }}"
+  TENJIN_K6_WORKER_MEMORY_LIMIT: "{{ .Values.k6Service.workerMemoryLimit }}"
+
+  TENJIN_K6_WORKER_READY_TIMEOUT_SECONDS: "{{ .Values.k6Service.workerReadyTimeoutSeconds }}"
+  TENJIN_K6_MONITOR_INTERVAL_MS: "{{ .Values.k6Service.monitorIntervalMs }}"
+
+  # =========================
+  # Litmus
+  # =========================
+  TENJIN_LITMUS_SERVICE_URL: "{{ .Values.litmus.serviceUrl }}"
+  TENJIN_LITMUS_SERVICE_TOKEN: "{{ .Values.litmus.serviceToken }}"
+
+  # =========================
+  # Common
+  # =========================
+  TENJIN_CHAOS_TESTING: "{{ .Values.tenjinStandalone.chaosTesting }}"
+  TZ: "{{ .Values.tenjinStandalone.timezone }}"
+

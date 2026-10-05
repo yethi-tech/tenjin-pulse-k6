@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-postgres
+  labels:
+    app: {{ .Release.Name }}-postgres
+
+spec:
+  serviceName: postgres
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-postgres
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-postgres
+
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:18
+
+          ports:
+            - containerPort: 5432
+
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-postgres-config
+
+          volumeMounts:
+            # PostgreSQL data (EBS)
+            - name: postgres-data
+              mountPath: /var/lib/postgresql
+            # JTL storage (EFS PVC)
+            - name: jtl-storage
+              mountPath: /root/test_reports
+              subPath: test_reports
+
+      volumes:
+        # EFS PVC (must already exist)
+        - name: jtl-storage
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-tenjin-shared-pvc
+
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+        labels:
+          app: {{ .Release.Name }}-postgres
+        annotations:
+          "helm.sh/resource-policy": keep
+
+      spec:
+        accessModes:
+          - {{ .Values.db.accessModes | default "ReadWriteOnce" }}
+
+        storageClassName: {{ .Values.db.storageClassName | default "gp3" }}
+
+        resources:
+          requests:
+            storage: {{ .Values.db.size | default "30Gi" }}

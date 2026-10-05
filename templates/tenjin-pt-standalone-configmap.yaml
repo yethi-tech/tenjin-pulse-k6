@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-tenjin-pt-standalone-config
+  labels:
+    app: tenjin-pt-standalone
+
+data:
+  # Database
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "{{ .Values.db.driver }}"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ .Release.Name }}-postgres:5432/{{ .Values.db.database }}"
+  SPRING_DATASOURCE_USERNAME: "{{ .Values.db.username }}"
+  SPRING_DATASOURCE_PASSWORD: "{{ .Values.db.password }}"
+
+  # InfluxDB
+  TENJIN_INFLUX_DB_URL: "{{ .Values.influxdb.url }}"
+  TENJIN_INFLUX_DB_TOKEN: "{{ .Values.influxdb.token }}"
+  TENJIN_INFLUX_DB_ORG: "{{ .Values.influxdb.org }}"
+  TENJIN_INFLUX_DB_BUCKET: "{{ .Values.influxdb.bucket }}"
+
+  # Standalone
+  TENJIN_BASE_URL: "{{ .Values.tenjinStandalone.baseUrl }}"
+  TENJIN_MAIL_HOST: "{{ .Values.tenjinStandalone.mailHost }}"
+  TENJIN_MAIL_PORT: "{{ .Values.tenjinStandalone.mailPort }}"
+  TENJIN_MAIL_USERNAME: "{{ .Values.tenjinStandalone.mailUsername }}"
+  TENJIN_MAIL_PWD: "{{ .Values.tenjinStandalone.mailPassword }}"
+
+  TENJIN_CHAOS_TESTING: "{{ .Values.tenjinStandalone.chaosTesting }}"
+  TZ: "{{ .Values.tenjinStandalone.timezone }}"
+
+  TENJIN_COOKIE_HTTP: "{{ .Values.tenjinStandalone.cookieHttp }}"
+  TENJIN_COOKIE_SECURE: "{{ .Values.tenjinStandalone.cookieSecure }}"
+  TENJIN_COOKIE_SITE: "{{ .Values.tenjinStandalone.cookieSite }}"
+
+  TENJIN_PT_SERVICE_URL: "http://{{ .Release.Name }}-tenjin-pt-service:8080/api"
+  TENJIN_OAUTH2_KEYSTORE_PATH: "/etc/ssl/certs/cert.p12"
+  TENJIN_OAUTH2_KEYSTORE_PASSWORD: "Yethi123"
+  TENJIN_OAUTH2_KEY_ALIAS: "oauth-server"
+  TENJIN_OAUTH2_REDIRECT_URIS: "HOSTIP/callback"
+  TENJIN_FRONTEND_URL: "HOSTIP"
+  TENJIN_CORS_ALLOWED_ORIGINS: "HOSTIP"
+  TENJIN_OAUTH2_INTERNAL_TOKEN_URL: "HOSTIP/oauth2/token"
