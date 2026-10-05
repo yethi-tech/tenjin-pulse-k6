@@ -6,21 +6,25 @@ db:
   database: tenjin
   type: postgres
   accessMode: ReadWriteOnce
-  storageClassName: gp3
+  storageClassName: standard
   size: 20Gi
 
-influxdb:
+InfluxDB:
   url: <influxdb_url>
   token: <influxdb_token>
+
+  username: <influxdb_username>
+  password: <influxdb_password>
   org: Yethi
   bucket: jmeter
+  retention: 30d
 
 k6Service:
   image: registry.yethi.in/products/tenjin-pulse/tenjin-pt/tenjin-k6-service:test
 
   persistence:
     size: 20Gi
-    storageClassName: efs-sc
+    storageClassName: "nfs-storage"
 
   allowedExtensions: ""
 
@@ -54,7 +58,7 @@ litmus:
   serviceToken: <litmus-token>
 
 tenjinStandalone:
-  image: yethitech/tenjin-pt-standalone:2.3.0
+  image: registry.yethi.in/products/tenjin-pulse/tenjin-pt/tenjin-pt-standalone:test
   baseUrl: <tenjin-standalone-url>
   mailHost: smtp.office365.com
   mailPort: 587
