@@ -4,6 +4,9 @@ metadata:
   name: {{ .Release.Name }}-pt-service-sa
   namespace: {{ .Release.Namespace }}
 
+# ============================================================
+# NAMESPACE-SCOPED ROLE
+# ============================================================
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -13,36 +16,44 @@ metadata:
 
 rules:
 
-  # ==========================================
-  # Pods
-  # ==========================================
-  # Create, read, monitor and delete K6/JMeter
-  # worker pods.
+  # ==========================================================
+  # PODS
+  # ==========================================================
   - apiGroups: [""]
     resources:
       - pods
     verbs:
-      - create
       - get
       - list
       - watch
+      - create
+      - update
+      - patch
       - delete
 
-  # ==========================================
-  # Pod Logs
-  # ==========================================
-  # Read worker pod logs.
+  # ==========================================================
+  # POD LOGS
+  # ==========================================================
   - apiGroups: [""]
     resources:
       - pods/log
     verbs:
       - get
 
-  # ==========================================
-  # Services
-  # ==========================================
-  # Required only if the application creates
-  # and manages Services for worker pods.
+  # ==========================================================
+  # POD STATUS
+  # ==========================================================
+  - apiGroups: [""]
+    resources:
+      - pods/status
+    verbs:
+      - get
+      - update
+      - patch
+
+  # ==========================================================
+  # SERVICES
+  # ==========================================================
   - apiGroups: [""]
     resources:
       - services
@@ -51,13 +62,80 @@ rules:
       - list
       - watch
       - create
+      - update
+      - patch
       - delete
 
-  # ==========================================
-  # Events
-  # ==========================================
-  # Useful for checking scheduling/startup
-  # failures of worker pods.
+  # ==========================================================
+  # ENDPOINTS
+  # ==========================================================
+  - apiGroups: [""]
+    resources:
+      - endpoints
+    verbs:
+      - get
+      - list
+      - watch
+
+  # ==========================================================
+  # CONFIGMAPS
+  # ==========================================================
+  - apiGroups: [""]
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+
+  # ==========================================================
+  # SECRETS
+  # ==========================================================
+  - apiGroups: [""]
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+
+  # ==========================================================
+  # PERSISTENT VOLUME CLAIMS
+  # ==========================================================
+  - apiGroups: [""]
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+
+  # ==========================================================
+  # PVC STATUS
+  # ==========================================================
+  - apiGroups: [""]
+    resources:
+      - persistentvolumeclaims/status
+    verbs:
+      - get
+      - update
+      - patch
+
+  # ==========================================================
+  # EVENTS
+  # ==========================================================
   - apiGroups: [""]
     resources:
       - events
@@ -66,6 +144,168 @@ rules:
       - list
       - watch
 
+  # ==========================================================
+  # ENDPOINT SLICES
+  # ==========================================================
+  - apiGroups: ["discovery.k8s.io"]
+    resources:
+      - endpointslices
+    verbs:
+      - get
+      - list
+      - watch
+
+  # ==========================================================
+  # DEPLOYMENTS
+  # ==========================================================
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+
+  # ==========================================================
+  # DEPLOYMENT STATUS
+  # ==========================================================
+  - apiGroups: ["apps"]
+    resources:
+      - deployments/status
+    verbs:
+      - get
+      - update
+      - patch
+
+  # ==========================================================
+  # STATEFULSETS
+  # ==========================================================
+  - apiGroups: ["apps"]
+    resources:
+      - statefulsets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+
+  # ==========================================================
+  # STATEFULSET STATUS
+  # ==========================================================
+  - apiGroups: ["apps"]
+    resources:
+      - statefulsets/status
+    verbs:
+      - get
+      - update
+      - patch
+
+  # ==========================================================
+  # REPLICASETS
+  # ==========================================================
+  - apiGroups: ["apps"]
+    resources:
+      - replicasets
+    verbs:
+      - get
+      - list
+      - watch
+
+  # ==========================================================
+  # JOBS
+  # ==========================================================
+  - apiGroups: ["batch"]
+    resources:
+      - jobs
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+
+  # ==========================================================
+  # JOB STATUS
+  # ==========================================================
+  - apiGroups: ["batch"]
+    resources:
+      - jobs/status
+    verbs:
+      - get
+      - update
+      - patch
+
+  # ==========================================================
+  # CRONJOBS
+  # ==========================================================
+  - apiGroups: ["batch"]
+    resources:
+      - cronjobs
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+
+
+# ============================================================
+# CLUSTER-SCOPED ROLE
+# Required for PV / StorageClass operations
+# ============================================================
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-pt-service-cluster-role
+
+rules:
+
+  # ==========================================================
+  # PERSISTENT VOLUMES
+  # ==========================================================
+  - apiGroups: [""]
+    resources:
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+
+  # ==========================================================
+  # STORAGE CLASSES
+  # ==========================================================
+  - apiGroups: ["storage.k8s.io"]
+    resources:
+      - storageclasses
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+
+
+# ============================================================
+# ROLE BINDING
+# ============================================================
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -82,3 +322,24 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: {{ .Release.Name }}-pt-service-role
+
+
+# ============================================================
+# CLUSTER ROLE BINDING
+# Required for PV / StorageClass permissions
+# ============================================================
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}-pt-service-cluster-rolebinding
+
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Release.Name }}-pt-service-sa
+    namespace: {{ .Release.Namespace }}
+
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Release.Name }}-pt-service-cluster-role

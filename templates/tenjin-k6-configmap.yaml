@@ -44,15 +44,5 @@ data:
   TENJIN_K6_WORKER_READY_TIMEOUT_SECONDS: "{{ .Values.k6Service.workerReadyTimeoutSeconds }}"
   TENJIN_K6_MONITOR_INTERVAL_MS: "{{ .Values.k6Service.monitorIntervalMs }}"
 
-  # =========================
-  # Litmus
-  # =========================
-  TENJIN_LITMUS_SERVICE_URL: "{{ .Values.litmus.serviceUrl }}"
-  TENJIN_LITMUS_SERVICE_TOKEN: "{{ .Values.litmus.serviceToken }}"
-
-  # =========================
-  # Common
-  # =========================
-  TENJIN_CHAOS_TESTING: "{{ .Values.tenjinStandalone.chaosTesting }}"
   TZ: "{{ .Values.tenjinStandalone.timezone }}"
 

@@ -10,14 +10,18 @@ db:
   size: 20Gi
 
 InfluxDB:
-  url: <influxdb_url>
-  token: <influxdb_token>
-
-  username: <influxdb_username>
-  password: <influxdb_password>
-  org: Yethi
-  bucket: jmeter
-  retention: 30d
+  image: "influxdb:2.7.11"
+  username: "admin"
+  password: "Admin@123"
+  org: "jmeter"
+  bucket: "jmeter"
+  token: "YOUR_INFLUXDB_TOKEN_HERE"
+  retention: "30d"
+  persistence:
+    size: "30Gi"
+    storageClassName: "standard"
+  service:
+    type: NodePort
 
 k6Service:
   image: registry.yethi.in/products/tenjin-pulse/tenjin-pt/tenjin-k6-service:test

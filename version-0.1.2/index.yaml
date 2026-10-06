@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  tenjin-pulse-k6:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-10-06T12:44:50.0501045+05:30"
+    description: A Helm chart for Kubernetes
+    digest: 2d1a430c8bfaa855e49bb19c2c48995bd1bab2b6440f1cb0ac59ce0145bf19a5
+    name: tenjin-pulse-k6
+    type: application
+    urls:
+    - https://yethi-tech.github.io/tenjin-pulse-k6/tenjin-pulse-k6-0.1.2.tgz
+    version: 0.1.2
+generated: "2026-10-06T12:44:50.0471477+05:30"
