@@ -9,7 +9,7 @@ db:
   storageClassName: standard
   size: 20Gi
 
-InfluxDB:
+influxdb:
   image: "influxdb:2.7.11"
   username: "admin"
   password: "Admin@123"

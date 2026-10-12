@@ -22,9 +22,9 @@ data:
 
     [[outputs.influxdb_v2]]
       urls = ["http://{{ .Release.Name }}-influxdb.{{ .Release.Namespace }}.svc.cluster.local:8086"]
-      token = "{{ .Values.InfluxDB.token }}"
-      organization = "{{ .Values.InfluxDB.org }}"
-      bucket = "{{ .Values.InfluxDB.bucket }}"
+      token = "{{ .Values.influxdb.token }}"
+      organization = "{{ .Values.influxdb.org }}"
+      bucket = "{{ .Values.influxdb.bucket }}"
       timeout = "5s"
       user_agent = "telegraf"
 

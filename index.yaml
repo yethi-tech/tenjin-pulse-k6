@@ -3,9 +3,9 @@ entries:
   tenjin-pulse-k6:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-10-12T13:56:16.4203809+05:30"
+    created: "2026-10-12T14:25:25.2009632+05:30"
     description: A Helm chart for Kubernetes
-    digest: 8be8aca4701be4f400290ef37d792acb45aacb7d6f499a29f41022ef3d0af9cf
+    digest: 5026cfb0acbe25ce6fea054fb9fffd7333c953cfc26feb3dd481d9147bb31357
     name: tenjin-pulse-k6
     type: application
     urls:
@@ -13,7 +13,7 @@ entries:
     version: 0.1.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-10-12T13:56:16.417613+05:30"
+    created: "2026-10-12T14:25:25.1981242+05:30"
     description: A Helm chart for Kubernetes
     digest: 2d1a430c8bfaa855e49bb19c2c48995bd1bab2b6440f1cb0ac59ce0145bf19a5
     name: tenjin-pulse-k6
@@ -23,7 +23,7 @@ entries:
     version: 0.1.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-10-12T13:56:16.4159945+05:30"
+    created: "2026-10-12T14:25:25.1956514+05:30"
     description: A Helm chart for Kubernetes
     digest: d3a8a4862080df552cd96612d5096cb072befdde3a63893f54caaa15dcf8ca4d
     name: tenjin-pulse-k6
@@ -33,7 +33,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-10-12T13:56:16.413799+05:30"
+    created: "2026-10-12T14:25:25.1934038+05:30"
     description: A Helm chart for Kubernetes
     digest: 74f4ac0201e6aed60fc322f4103bdeafb55a790029ff45e4edca8634b8852de9
     name: tenjin-pulse-k6
@@ -41,4 +41,4 @@ entries:
     urls:
     - https://yethi-tech.github.io/tenjin-pulse-k6/tenjin-pulse-k6-0.1.0.tgz
     version: 0.1.0
-generated: "2026-10-12T13:56:16.4115625+05:30"
+generated: "2026-10-12T14:25:25.1917874+05:30"

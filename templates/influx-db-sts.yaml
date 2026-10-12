@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: influxdb
-          image: {{ .Values.InfluxDB.image | default "influxdb:2.7.11" }}
+          image: {{ .Values.influxdb.image | default "influxdb:2.7.11" }}
 
           ports:
             - name: http
@@ -61,8 +61,8 @@ spec:
   accessModes:
     - ReadWriteOnce
 
-  storageClassName: {{ default "gp3" .Values.InfluxDB.persistence.storageClassName }}
+  storageClassName: {{ default "gp3" .Values.influxdb.persistence.storageClassName }}
 
   resources:
     requests:
-      storage: {{ .Values.InfluxDB.persistence.size | default "30Gi" }}
+      storage: {{ .Values.influxdb.persistence.size | default "30Gi" }}
