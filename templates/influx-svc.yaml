@@ -6,7 +6,7 @@ metadata:
     app: {{ .Release.Name }}-influxdb
 
 spec:
-  type: {{ .Values.InfluxDB.service.type | default "ClusterIP" }}
+  type: {{ .Values.influxdb.service.type | default "ClusterIP" }}
 
   ports:
     - name: http
